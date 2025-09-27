@@ -42,7 +42,8 @@ Every piece of information in Wasl is a Block with its own DNA.
   "state": { "name": "Monthly Recurring Revenue", "value": 52300, "unit": "USD" },
   "lineage": [ { "timestamp": "...", "user": "...", "change": "..." } ],
   "acl": { "view": ["all"], "edit": ["group:finance"] }
-}```
+}
+```
 
 ### 🕸️ The Wasl Graph: A Resilient Network of Knowledge
 
