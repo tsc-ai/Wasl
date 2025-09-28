@@ -1,0 +1,54 @@
+version: '3.8'
+
+# --- Wasl Development Environment ---
+# This file defines the multi-service application for local development.
+# Run with: ./scripts/run_dev.sh
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: ./postgres/Dockerfile  # We will use a custom Dockerfile for AGE
+    container_name: wasl_db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=wasl_user
+      - POSTGRES_PASSWORD=wasl_pass
+      - POSTGRES_DB=wasl_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - wasl_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wasl_user -d wasl_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api_server:
+    build:
+      context: ./wasl-server
+    container_name: wasl_api_server
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./wasl-server:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  sync_server:
+    build:
+      context: ./wasl-sync
+    container_name: wasl_sync_server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./wasl-sync:/usr/src/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  wasl_data:

@@ -1,0 +1,12 @@
+[package]
+name = "wasl-sync"
+version = "0.1.0"
+edition = "2021"
+description = "The real-time sync server for Wasl collaboration."
+
+[dependencies]
+axum = "0.5.17"
+tokio = { version = "1.21.2", features = ["full"] }
+yrs = "0.16.1"
+tracing = "0.1.37"
+tracing-subscriber = "0.3.16"
