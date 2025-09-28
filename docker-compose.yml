@@ -1,4 +1,4 @@
-version: '3.8'
+# FILE: ./docker-compose.yml
 
 # --- Wasl Development Environment ---
 # This file defines the multi-service application for local development.
@@ -6,17 +6,19 @@ version: '3.8'
 
 services:
   db:
+    # BUILD CONTEXT FIX:
+    # Explicitly set the build context to the root and the Dockerfile path.
     build:
       context: .
-      dockerfile: ./postgres/Dockerfile  # We will use a custom Dockerfile for AGE
+      dockerfile: ./postgres/Dockerfile
     container_name: wasl_db
     restart: unless-stopped
     environment:
       - POSTGRES_USER=wasl_user
       - POSTGRES_PASSWORD=wasl_pass
       - POSTGRES_DB=wasl_db
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     volumes:
       - wasl_data:/var/lib/postgresql/data
     healthcheck:
@@ -26,6 +28,8 @@ services:
       retries: 5
 
   api_server:
+    # BUILD CONTEXT FIX:
+    # The build context is the 'wasl-server' directory.
     build:
       context: ./wasl-server
     container_name: wasl_api_server
@@ -39,13 +43,16 @@ services:
         condition: service_healthy
 
   sync_server:
+    # BUILD CONTEXT FIX:
+    # The build context is the 'wasl-sync' directory.
     build:
       context: ./wasl-sync
     container_name: wasl_sync_server
     ports:
       - "8080:8080"
     volumes:
-      - ./wasl-sync:/usr/src/app
+      # We map the src directory for live-reloading during development
+      - ./wasl-sync/src:/usr/src/app/src
     depends_on:
       db:
         condition: service_healthy
