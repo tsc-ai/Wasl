@@ -8,9 +8,10 @@ services:
   db:
     # BUILD CONTEXT FIX:
     # Explicitly set the build context to the root and the Dockerfile path.
-    build:
-      context: .
-      dockerfile: ./postgres/Dockerfile
+    #    build:
+    #      context: .
+    #      dockerfile: ./postgres/Dockerfile
+    image: wasl-db-test:1.6
     container_name: wasl_db
     restart: unless-stopped
     environment:

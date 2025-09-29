@@ -1,21 +1,20 @@
-# Use an official Python runtime as a parent image
+# --- Wasl API Server Image ---
+
 FROM python:3.10-slim
 
-# Set the working directory in the container
+# Installer Poetry
+RUN pip install --no-cache-dir poetry
+
 WORKDIR /app
 
-# Install Poetry
-RUN pip install poetry
-
-# Copy only the dependency definition files
+# Copier uniquement les fichiers de config pour optimiser le cache
 COPY pyproject.toml poetry.lock ./
 
-# Install project dependencies
-RUN poetry config virtualenvs.create false && poetry install --no-dev --no-root
+# Installer les dépendances sans les paquets de dev
+RUN poetry config virtualenvs.create false && poetry install --without dev --no-root
 
-# Copy the rest of the application's source code
-COPY ./app /app/app
+# Copier le reste du code
+COPY . .
 
-# The command to run the application will be provided by docker-compose
-# Expose the port the app runs on
-EXPOSE 8000
+# Lancer l’API avec Uvicorn
+CMD ["uvicorn", "wasl_server.main:app", "--host", "0.0.0.0", "--port", "8000"]

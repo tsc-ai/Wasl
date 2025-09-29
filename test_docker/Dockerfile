@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Cette couche est lente mais stable. Elle sera mise en cache et réutilisée
 # tant que la commande git ne change pas.
 
-RUN mdkir /tmp/age
+#RUN mdkir /tmp/age
 COPY ./age /tmp/age
 
 #RUN git clone https://github.com/apache/age.git /tmp/age && cd /tmp/age && git fetch origin && git checkout release/PG14/1.5.0

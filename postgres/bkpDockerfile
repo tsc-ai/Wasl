@@ -1,0 +1,47 @@
+# --- PostgreSQL + Apache AGE v1.2.0 ---
+
+FROM postgres:14-alpine3.17
+
+# Installer les dépendances nécessaires
+# Ajout de 'apk update' pour rafraîchir la liste des paquets avant l'installation
+RUN apk update && \
+    apk add --no-cache \
+    bash \
+    git \
+    build-base \
+    perl \
+    bison \
+    flex \
+    libxml2-dev \
+    clang14 \
+    llvm14 \
+    make \
+    autoconf \
+    automake \
+    postgresql14-dev
+
+# Définir variables pour que pg_config soit trouvé
+ENV PATH="/usr/local/bin:$PATH"
+
+# Définir la variable d'environnement pour pg_config (format corrigé)
+ENV PG_CONFIG=/usr/bin/pg_config
+
+RUN apk add build-base
+
+# Corriger le chemin de pg_config (nécessaire pour make AGE)
+#RUN ln -s /usr/lib/postgresql/14/bin/pg_config  /usr/local/bin/pg_config
+
+
+# Cloner le dépôt Apache AGE et passer au tag v1.2.0 (compatible avec PostgreSQL 14)
+#RUN git clone https://github.com/apache/age.git /tmp/age && cd /tmp/age &&  git fetch --tags && git checkout remotes/origin/release/PG14/1.5.0
+
+COPY age /tmp/
+#RUN cd /tmp/age &&  git fetch --tags && git checkout remotes/origin/release/PG14/1.5.0
+
+#RUN cd /tmp/age &&  make -s &&  make install && rm -rf /tmp/age
+
+# Remarque : l’extension AGE doit encore être créée dans la base lors du premier lancement.
+# Cela peut être géré via un script initdb dans docker-entrypoint-initdb.d
+
+CMD ["/bin/bash"]
+

@@ -1,0 +1,6 @@
+[unstable]
+unstable-options = true
+
+[build]
+# List of tools that the build process may need to install.
+tools = ["cargo-chef"]
